@@ -1,20 +1,33 @@
-<template lang='pug'>
-  #app.popup-page
-    h1 Simple Proxy
-      span
-        el-button(size='mini' @click='gotoSettingPage') {{$t('Setting')}}
-      small
-        //- label 默认连接
-        //- el-select(v-model='defaultMode' size='mini')
-          el-option(label='使用系统配置' value='SYSTEM')
-          el-option(label='直接连接' value='DIRECT')
-        el-switch(v-model='enable' :active-text='$t("Enable")')
-    rule-list(ref='list' :action='false')
-      p(slot='empty-note') {{$t('Rules not found, ')}}<a href='/setting.html' target='_blank'>{{$t('Click to Add')}}</a>
+<template>
+  <div id="app" class="popup-page">
+    <h2>
+      <span>老干爹HOSTS切换器</span>
+      <el-switch v-model="enable" :active-text="$t('Enable')"></el-switch>
+    </h2>
+
+    <div class="mt-10">
+        <div v-for="env in ENVS" class="mt-4">
+          <el-radio :label="env.name" v-model="selectedEnv">{{env.name}}</el-radio>
+        </div>
+    </div>
+  </div>
 </template>
+
+<style>
+  .mt-4 {
+    margin-top: 4px;
+  }
+  .mt-10 {
+    margin-top: 10px;
+  }
+  .mt-20 {
+    margin-top: 20px;
+  }
+</style>
 
 <script>
 import { Storage } from '../utils'
+import {ENVS} from '../common/constants'
 import RuleList from '../components/list'
 
 export default {
@@ -25,18 +38,15 @@ export default {
   data() {
     let isEnable = Storage.get('enable')
     return {
+      ENVS,
+      selectedEnv: ENVS[0].name,
       enable: isEnable === '' ? true : isEnable,
-      // defaultMode: Storage.get('defaultMode') || 'DIRECT',
     }
   },
   watch: {
     enable() {
       this.$refs.list.setProxy(this.enable)
     },
-    // defaultMode() {
-    //   Storage.set('defaultMode', this.defaultMode)
-    //   this.$refs.list.setProxy()
-    // },
   },
   methods: {
     gotoSettingPage() {
