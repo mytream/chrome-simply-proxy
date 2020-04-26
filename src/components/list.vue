@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { Storage } from '../utils'
+import { Storage, setProxy } from '../utils'
 
 export default {
   props: {
@@ -132,18 +132,22 @@ export default {
         if (index > -1) this.list.splice(index, 1)
       })
     },
+
     editItem(id) {
       let index = this.list.findIndex(it => id === it.id)
       if (index > -1) this.$emit('edit', this.list[index])
     },
+
     addItem(item) {
       this.list.unshift(Object.assign(item, {id: new Date().getTime() + '-' + 0, enable: false}))
       this.sortList()
     },
+
     addItems(items) {
       this.list = this.list.concat(items)
       this.sortList()
     },
+
     setItem(item) {
       let index = this.list.findIndex(it => item.id === it.id)
       if (index > -1) {
@@ -151,52 +155,13 @@ export default {
         this.sortList()
       } else this.addItem(item)
     },
+
     getEnabledHosts() {
       return this.list.filter(it => it.enable)
     },
-    // refreshDataForBk(rules) {
-    //   chrome.extension.sendRequest(rules || this.list.filter(it => it.enable))
-    // },
-    setProxy(enable) {
-      if (enable === undefined) {
-        enable = Storage.get('enable')
-        if (enable === '') enable = true
-        else if (enable === false) return
-      } else {
-        Storage.set('enable', enable)
-      }
-      // let defaultMode = Storage.get('defaultMode') || 'DIRECT'
-      let config = enable ? {mode: 'pac_script', pacScript: {data: this.getPacScript()}} : {mode: 'system'}
-      window.chrome.proxy.settings.set({scope: 'regular', value: config})
-      // this.refreshDataForBk()
-    },
-    getPacScript() {
-      var script = ''
-      let results = this.list.filter(it => it.enable)
-      for (var i = 0; i < results.length; i++) {
-        let info = results[i]
-        script += (i === 0 ? 'if' : 'else if')
-        if (info.domain.indexOf('/') > 0) {
-          script += '(shExpMatch(url, "http://' + info.domain + '") || shExpMatch(url, "https://' + info.domain + '"))'
-        } else if (info.domain.indexOf('*') > -1) {
-          script += '(shExpMatch(host, "' + info.domain + '"))'
-        } else {
-          script += '(host == "' + info.domain + '")'
-        }
-        script += '{return "PROXY ' + info.target + '; DIRECT";}\n'
-      }
-      if (script) script += 'else { return "DIRECT"; }'
 
-      let data = `
-function FindProxyForURL(url,host){
-  if(shExpMatch(url, "http:*") || shExpMatch(url, "https:*")){
-    ${script}
-  } else {
-    return "DIRECT";
-  }
-}
-      `
-      return data
+    setProxy(enable) {
+      setProxy(enable, this.list);
     },
   },
 }

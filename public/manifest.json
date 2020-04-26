@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "Simply Proxy",
-  "description": "一个朴素的代理配置扩展",
+  "name": "老干爹HOSTS切换器name",
+  "description": "老干爹HOSTS切换器desc",
   "minimum_chrome_version": "2",
   "version": "0.1.8",
   "icons": {
@@ -11,11 +11,13 @@
   "options_page": "setting.html",
   "browser_action": {
     "default_icon": "icons/icon_32.png",
-    "default_title": "Simple Proxy",
+    "default_title": "老干爹HOSTS切换器title",
     "default_popup": "popup.html"
   },
   "permissions": [
     "proxy",
-    "storage"
-  ]
+    "storage",
+    "https://git.tezign.com/*"
+  ],
+  "content_security_policy": "default-src 'self'; script-src 'self' https://git.tezign.com/ 'unsafe-eval'; connect-src https://git.tezign.com/; style-src * 'unsafe-inline' 'self' blob:; img-src 'self' https://git.tezign.com/ ;font-src 'self' https://git.tezign.com/;"
 }

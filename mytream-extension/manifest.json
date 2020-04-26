@@ -4,7 +4,12 @@
   "description": "苑永志的测试chrome扩展3",
   "minimum_chrome_version": "52",
   "version": "0.0.1",
-  "permissions": ["activeTab","storage", "declarativeContent"],
+  "permissions": [
+    "proxy",
+    "activeTab",
+    "storage",
+    "declarativeContent"
+  ],
   "page_action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -30,7 +35,9 @@
     }
   },
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": false
   },
   "options_page": "options.html"
